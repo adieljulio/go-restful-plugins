@@ -43,7 +43,7 @@ func TestFilterWithTraceID(t *testing.T) {
 			Param(restful.PathParameter("namespace", "namespace")).
 			Param(restful.PathParameter("id", "user ID")).
 			To(func(request *restful.Request, response *restful.Response) {
-				traceID = request.HeaderParameter(traceIDKey)
+				traceID = request.HeaderParameter(TraceIDKey)
 			}))
 
 	container := restful.NewContainer()
@@ -51,7 +51,7 @@ func TestFilterWithTraceID(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodGet, "/namespace/abc/user/def", nil)
 	req.Header.Set("X-Forwarded-For", "8.8.8.8")
-	req.Header.Set(traceIDKey, "123456789")
+	req.Header.Set(TraceIDKey, "123456789")
 
 	resp := httptest.NewRecorder()
 	container.ServeHTTP(resp, req)
@@ -71,7 +71,7 @@ func TestFilterWithoutTraceID(t *testing.T) {
 			Param(restful.PathParameter("namespace", "namespace")).
 			Param(restful.PathParameter("id", "user ID")).
 			To(func(request *restful.Request, response *restful.Response) {
-				traceID = request.HeaderParameter(traceIDKey)
+				traceID = request.HeaderParameter(TraceIDKey)
 			}))
 
 	container := restful.NewContainer()
@@ -87,7 +87,9 @@ func TestFilterWithoutTraceID(t *testing.T) {
 	traceIDSplited := strings.Split(traceID, "-")
 	traceUnix, err := strconv.ParseInt(traceIDSplited[0], 16, 64)
 	assert.Nil(t, err)
+
 	traceTime := time.Unix(traceUnix, 0)
+
 	assert.Nil(t, validateIAMUUID(traceIDSplited[1]))
 	assert.WithinDuration(t, time.Now().UTC(), traceTime, time.Second*2)
 }
@@ -97,6 +99,8 @@ func validateIAMUUID(u string) error {
 	if notIAMFormat {
 		return errors.New("IAM's UUID doesn't contain dash (-)")
 	}
+
 	_, err := uuid.Parse(u)
+
 	return err
 }
