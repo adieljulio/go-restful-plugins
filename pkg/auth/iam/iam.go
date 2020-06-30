@@ -232,7 +232,9 @@ func parseAccessToken(request *restful.Request) (string, error) {
 }
 
 func logErr(err error) {
-	logrus.Error(err)
+	if err != nil {
+		logrus.Error(err)
+	}
 }
 
 func respondError(httpStatus, errorCode int, errorMessage string) restful.ServiceError {

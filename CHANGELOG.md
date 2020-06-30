@@ -1,5 +1,9 @@
 Release v3.1.3 (2019-12-12)
 ===========================
+- Handling empty error log in `auth/iam` package
+
+Release v3.1.3 (2019-12-12)
+===========================
 - Add `WriteErrorWithEventID` in `response` package
 - Update `Write` in `response` package
 
